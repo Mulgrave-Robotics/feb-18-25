@@ -72,7 +72,9 @@ public final class Constants {
     public static final int kLeftMotorCanId = 9;
     public static final int kRightMotorCanId = 10;
 
-    public static final double kGearRatio = 4.4 * 300;
+    // public static final double kGearRatio = 4.4 * 300;
+    // Calculated by Lok
+    public static final double kGearRatio = 0.2608;
 
     public static final double kBaseHeight = 18.0;
     public static final double kLevel1Height = 31.875;
