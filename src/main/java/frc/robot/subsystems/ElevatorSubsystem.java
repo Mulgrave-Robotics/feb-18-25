@@ -11,7 +11,9 @@ import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.RelativeEncoder;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -19,6 +21,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final SparkFlex leftMotor;
     private final SparkFlex rightMotor;
     private final RelativeEncoder encoder;
+    private int currentLevel;
 
     public ElevatorSubsystem() {
         leftMotor = new SparkFlex(ElevatorConstants.kLeftMotorCanId, MotorType.kBrushless);
@@ -43,6 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         // ✅ Encoder
         encoder = leftMotor.getEncoder();
         encoder.setPosition(0);
+        currentLevel = 0;
     }
 
     private double inchesToRotations(double inches) {
@@ -71,5 +75,71 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void stop() {
         leftMotor.set(0);
         rightMotor.set(0);
+    }
+
+    //Lok's approach
+
+    public double getPositionInches() {
+        return encoder.getPosition() * (2 * Math.PI * ElevatorConstants.kGearRatio);           
+    }
+
+    public void reachLevel(int targetLevel, int direction){
+        
+        if (direction > 0) {
+            // move up
+            if (targetLevel <= ElevatorConstants.kMaxLevel) {
+                leftMotor.set(ElevatorConstants.kMaxSpeedPercentage*direction);
+                currentLevel++;
+            }
+        } else {
+            // move down
+            if (targetLevel >= ElevatorConstants.kMinLevel) {
+                leftMotor.set(ElevatorConstants.kMaxSpeedPercentage*direction);
+                currentLevel--;
+            }
+
+        }
+        
+    }
+
+    public Command setLevel(int targetLevel, int direction){
+        return run(()-> reachLevel(targetLevel, direction));
+    }
+    
+    // Move up one level
+    public Command moveUp(){
+        double targetHeight;
+        switch(currentLevel) {
+            case 0:
+                // move to level 1
+                targetHeight = ElevatorConstants.kLevel1Height - ElevatorConstants.kBaseHeight;
+                break;
+            default:
+                // move to level 2 (max level)
+                targetHeight = ElevatorConstants.kLevel2Height - ElevatorConstants.kBaseHeight;
+        }
+        return setLevel(currentLevel+1,1).until(()->aroundHeight(targetHeight));
+    }
+
+    // Move up one level
+    public Command moveDown(){
+        double targetHeight;
+        switch(currentLevel) {
+            case 2:
+                // move to level 1
+                targetHeight = ElevatorConstants.kLevel1Height - ElevatorConstants.kBaseHeight;
+                break;
+            default:
+                // return to base
+                targetHeight = 0;
+        }
+        return setLevel(currentLevel-1,-1).until(()->aroundHeight(targetHeight));
+    }
+
+    public boolean aroundHeight(double height){
+        return aroundHeight(height, ElevatorConstants.kElevatorDefaultTolerance);
+    }
+    public boolean aroundHeight(double height, double tolerance){
+        return MathUtil.isNear(height,getPositionInches(),tolerance);
     }
 }
