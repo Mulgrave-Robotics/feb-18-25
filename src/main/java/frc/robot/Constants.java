@@ -75,17 +75,21 @@ public final class Constants {
     // public static final double kGearRatio = 4.4 * 300;
     // Calculated by Lok
     public static final double kGearRatio = 0.2608;
-
+    
+    // up to level 2 for now
+    public static final int kMaxLevel = 2;
+    public static final int kMinLevel = 0;
     public static final double kBaseHeight = 18.0;
     public static final double kLevel1Height = 31.875;
     public static final double kLevel2Height = 47.625;
     public static final double kMaxHeight = 72.0;
+    public static final double kElevatorDefaultTolerance = 1.0;
 
     public static final double kPositionConversionFactor = 1.0; // Adjust based on encoder specs
     public static final double kZeroOffset = 0.0; // Adjust if needed
 
     public static final double kEncoderCountsPerRotation = 42;
-    public static final double kMaxSpeedPercentage = 1.0;
+    public static final double kMaxSpeedPercentage = 0.5;
 
     public static final double kP = 0.1;
     public static final double kI = 0;

@@ -106,7 +106,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         return run(()-> reachLevel(targetLevel, direction));
     }
     
-    // Move up one level
+    // Move one level up
     public Command moveUp(){
         double targetHeight;
         switch(currentLevel) {
@@ -121,7 +121,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         return setLevel(currentLevel+1,1).until(()->aroundHeight(targetHeight));
     }
 
-    // Move up one level
+    // Move one level down
     public Command moveDown(){
         double targetHeight;
         switch(currentLevel) {
