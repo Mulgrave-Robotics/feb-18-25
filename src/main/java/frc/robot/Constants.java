@@ -72,17 +72,16 @@ public final class Constants {
     public static final int kLeftMotorCanId = 9;
     public static final int kRightMotorCanId = 10;
 
-    // public static final double kGearRatio = 4.4 * 300;
     // Calculated by Lok
-    public static final double kGearRatio = 0.2608;
+    public static final double kGearRatio = 0.2045;
     
     // up to level 2 for now
     public static final int kMaxLevel = 2;
     public static final int kMinLevel = 0;
-    public static final double kBaseHeight = 18.0;
-    public static final double kLevel1Height = 31.875;
-    public static final double kLevel2Height = 47.625;
-    public static final double kMaxHeight = 72.0;
+    //public static final double kIntakeBaseHeight = 20.0;
+    public static final double kL2Height = x1;
+    public static final double kL3Height = x1+x2;
+    public static final double kL4Height = x1+x2+x3;
     public static final double kElevatorDefaultTolerance = 1.0;
 
     public static final double kPositionConversionFactor = 1.0; // Adjust based on encoder specs

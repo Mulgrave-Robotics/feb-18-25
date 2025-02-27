@@ -90,12 +90,14 @@ public class ElevatorSubsystem extends SubsystemBase {
             if (targetLevel <= ElevatorConstants.kMaxLevel) {
                 leftMotor.set(ElevatorConstants.kMaxSpeedPercentage*direction);
                 currentLevel++;
+                SmartDashboard.putNumber("currentLevel", currentLevel);
             }
         } else {
             // move down
             if (targetLevel >= ElevatorConstants.kMinLevel) {
                 leftMotor.set(ElevatorConstants.kMaxSpeedPercentage*direction);
                 currentLevel--;
+                SmartDashboard.putNumber("currentLevel", currentLevel);
             }
 
         }
@@ -118,7 +120,9 @@ public class ElevatorSubsystem extends SubsystemBase {
                 // move to level 2 (max level)
                 targetHeight = ElevatorConstants.kLevel2Height - ElevatorConstants.kBaseHeight;
         }
-        return setLevel(currentLevel+1,1).until(()->aroundHeight(targetHeight));
+        SmartDashboard.putNumber("targetHeight", targetHeight);
+        SmartDashboard.putNumber("targetLevel", currentLevel+1);
+        return setLevel(currentLevel+1,1).until(()->aroundHeight(targetHeight)).andThen(() -> leftmotor.set(0.0));
     }
 
     // Move one level down
@@ -133,7 +137,9 @@ public class ElevatorSubsystem extends SubsystemBase {
                 // return to base
                 targetHeight = 0;
         }
-        return setLevel(currentLevel-1,-1).until(()->aroundHeight(targetHeight));
+        SmartDashboard.putNumber("targetHeight", targetHeight);
+        SmartDashboard.putNumber("targetLevel", currentLevel-1);
+        return setLevel(currentLevel-1,-1).until(()->aroundHeight(targetHeight)).andThen(() -> leftmotor.set(0.0));
     }
 
     public boolean aroundHeight(double height){
