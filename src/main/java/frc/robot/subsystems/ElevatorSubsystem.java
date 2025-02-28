@@ -1,151 +1,88 @@
 package frc.robot.subsystems;
 
-// import com.revrobotics.AbsoluteEncoder;
-//import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-//import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
 import com.revrobotics.RelativeEncoder;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-    private final SparkFlex leftMotor;
-    private final SparkFlex rightMotor;
+    private final SparkFlex upperMotor;
+    private final SparkFlex lowerMotor;
     private final RelativeEncoder encoder;
     private int currentLevel;
 
     public ElevatorSubsystem() {
-        leftMotor = new SparkFlex(ElevatorConstants.kLeftMotorCanId, MotorType.kBrushless);
-        rightMotor = new SparkFlex(ElevatorConstants.kRightMotorCanId, MotorType.kBrushless);
+        // ✅ Ensure CAN IDs match actual hardware
+        upperMotor = new SparkFlex(ElevatorConstants.elevatorUpperMotorID, MotorType.kBrushless);
+        lowerMotor = new SparkFlex(ElevatorConstants.elevatorLowerMotorID, MotorType.kBrushless);
 
         // ✅ Motor Configuration
         SparkFlexConfig globalConfig = new SparkFlexConfig();
-        SparkFlexConfig rightMotorConfig = new SparkFlexConfig();
+        SparkFlexConfig lowerMotorConfig = new SparkFlexConfig();
 
         globalConfig
-                .smartCurrentLimit(50)
+                .smartCurrentLimit(40)
                 .idleMode(IdleMode.kBrake);
 
-        rightMotorConfig
+        lowerMotorConfig
                 .apply(globalConfig)
-                .inverted(true);
+                .inverted(true); // Make sure motors move in sync
 
         // ✅ Apply configurations
-        leftMotor.configure(globalConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        rightMotor.configure(rightMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        upperMotor.configure(globalConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        lowerMotor.configure(lowerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-        // ✅ Encoder
-        encoder = leftMotor.getEncoder();
+        // ✅ Encoder setup
+        encoder = upperMotor.getEncoder();
         encoder.setPosition(0);
         currentLevel = 0;
     }
 
-    private double inchesToRotations(double inches) {
-        return (inches - ElevatorConstants.kBaseHeight) * ElevatorConstants.kGearRatio / (2 * Math.PI);
-    }
-
-    public void setPosition(double heightInches) {
-        double targetRotations = inchesToRotations(heightInches);
-        SmartDashboard.putNumber("targetRotations", targetRotations);
-        leftMotor.set(targetRotations);
-        rightMotor.set(leftMotor.get());
-    }
-
-    public void goToLevel1() {
-        setPosition(ElevatorConstants.kLevel1Height);
-    }
-
-    public void goToLevel2() {
-        setPosition(ElevatorConstants.kLevel2Height);
-    }
-
-    public void resetToBase() {
-        setPosition(ElevatorConstants.kBaseHeight);
-    }
-
-    public void stop() {
-        leftMotor.set(0);
-        rightMotor.set(0);
-    }
-
-    //Lok's approach
-
     public double getPositionInches() {
-        return encoder.getPosition() * (2 * Math.PI * ElevatorConstants.kGearRatio);           
+        return encoder.getPosition() * ElevatorConstants.kPositionConversionFactor;
     }
 
-    public void reachLevel(int targetLevel, int direction){
-        
-        if (direction > 0) {
-            // move up
-            if (targetLevel <= ElevatorConstants.kMaxLevel) {
-                leftMotor.set(ElevatorConstants.kMaxSpeedPercentage*direction);
-                currentLevel++;
-                SmartDashboard.putNumber("currentLevel", currentLevel);
-            }
-        } else {
-            // move down
-            if (targetLevel >= ElevatorConstants.kMinLevel) {
-                leftMotor.set(ElevatorConstants.kMaxSpeedPercentage*direction);
-                currentLevel--;
-                SmartDashboard.putNumber("currentLevel", currentLevel);
-            }
+    public void moveToHeight(double targetHeight) {
+        double currentHeight = getPositionInches();
+        double speed = (targetHeight > currentHeight) ? ElevatorConstants.kMaxSpeedPercentage : -ElevatorConstants.kMaxSpeedPercentage;
 
-        }
-        
+        upperMotor.set(speed);
+        lowerMotor.set(speed);
+
+        SmartDashboard.putNumber("Elevator Target Height", targetHeight);
+        SmartDashboard.putNumber("Elevator Speed", speed);
+        SmartDashboard.putNumber("Current Elevator Height", currentHeight);
     }
 
-    public Command setLevel(int targetLevel, int direction){
-        return run(()-> reachLevel(targetLevel, direction));
-    }
-    
-    // Move one level up
-    public Command moveUp(){
+    public Command goToLevel(int level) {
         double targetHeight;
-        switch(currentLevel) {
-            case 0:
-                // move to level 1
-                targetHeight = ElevatorConstants.kLevel1Height - ElevatorConstants.kBaseHeight;
-                break;
-            default:
-                // move to level 2 (max level)
-                targetHeight = ElevatorConstants.kLevel2Height - ElevatorConstants.kBaseHeight;
+        switch (level) {
+            case 1: targetHeight = ElevatorConstants.vL1Height; break;
+            case 2: targetHeight = ElevatorConstants.vL2Height; break;
+            case 3: targetHeight = ElevatorConstants.vL3Height; break;
+            case 4: targetHeight = ElevatorConstants.vL4Height; break;
+            default: targetHeight = ElevatorConstants.vL1Height;
         }
-        SmartDashboard.putNumber("targetHeight", targetHeight);
-        SmartDashboard.putNumber("targetLevel", currentLevel+1);
-        return setLevel(currentLevel+1,1).until(()->aroundHeight(targetHeight)).andThen(() -> leftmotor.set(0.0));
+
+        return run(() -> moveToHeight(targetHeight)).until(() -> Math.abs(getPositionInches() - targetHeight) < ElevatorConstants.kElevatorDefaultTolerance)
+                .andThen(() -> {
+                    upperMotor.set(0);
+                    lowerMotor.set(0);
+                    currentLevel = level;
+                });
     }
 
-    // Move one level down
-    public Command moveDown(){
-        double targetHeight;
-        switch(currentLevel) {
-            case 2:
-                // move to level 1
-                targetHeight = ElevatorConstants.kLevel1Height - ElevatorConstants.kBaseHeight;
-                break;
-            default:
-                // return to base
-                targetHeight = 0;
-        }
-        SmartDashboard.putNumber("targetHeight", targetHeight);
-        SmartDashboard.putNumber("targetLevel", currentLevel-1);
-        return setLevel(currentLevel-1,-1).until(()->aroundHeight(targetHeight)).andThen(() -> leftmotor.set(0.0));
-    }
-
-    public boolean aroundHeight(double height){
-        return aroundHeight(height, ElevatorConstants.kElevatorDefaultTolerance);
-    }
-    public boolean aroundHeight(double height, double tolerance){
-        return MathUtil.isNear(height,getPositionInches(),tolerance);
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Elevator Position", getPositionInches());
+        SmartDashboard.putNumber("Elevator Level", currentLevel);
     }
 }
