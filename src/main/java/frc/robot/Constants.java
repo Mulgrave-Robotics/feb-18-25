@@ -133,8 +133,8 @@ public final class Constants {
         public static final int coralMotorID = 11;
 
         // ✅ Define Coral Intake Speeds
-        public static final double CoralIntakeSpeeds = -0.2; // Adjust value as needed
-        public static final double CoralOuttakeSpeeds = -0.35; // Adjust value as needed
+        public static final double CoralIntakeSpeeds = -0.05; // Adjust value as needed
+        public static final double CoralOuttakeSpeeds = -0.2; // Adjust value as needed
 
         public static final double AlgaeIntakeSpeed = 0.1;
         public static final double AlgaeOuttakeSpeed = -0.1;
