@@ -98,7 +98,7 @@ public final class Constants {
         public static final double kI = 0;
         public static final double kD = 0;
 
-        public static final int kMaxLevel = 2;
+        public static final int kMaxLevel = 4;
         public static final int kMinLevel = 0;
     }
 
