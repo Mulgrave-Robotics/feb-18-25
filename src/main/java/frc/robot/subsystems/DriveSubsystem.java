@@ -97,20 +97,20 @@ public class DriveSubsystem extends SubsystemBase {
         double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
 
         // WITHOUT FIELD ORITENTATED DRIVE
-        // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        //     fieldRelative
-        //         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-        //         Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)))
-        //         : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+            fieldRelative
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
+                Rotation2d.fromDegrees(m_gyro.getAngle(IMUAxis.kZ)))
+                : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
 
         // FIELD ORITNETATED DRIVE
-        var chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        xSpeedDelivered, 
-        ySpeedDelivered, 
-        rotDelivered,
-        Rotation2d.fromDegrees(-m_gyro.getAngle(IMUAxis.kZ)) // Use negative to correct for gyro rotation
-        );
-        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
+        // var chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
+        // xSpeedDelivered, 
+        // ySpeedDelivered, 
+        // rotDelivered,
+        // Rotation2d.fromDegrees(-m_gyro.getAngle(IMUAxis.kZ)) // Use negative to correct for gyro rotation
+        // );
+        // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
         // END
 
 

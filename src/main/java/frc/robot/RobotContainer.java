@@ -31,7 +31,7 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * speedMultiplier, // Y-axis: forward/backward
                     -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * speedMultiplier, // X-axis: left/right
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband) * speedMultiplier, // Right stick: rotation
-                    true),
+                    false),
                 m_robotDrive
             )
         );
@@ -45,9 +45,9 @@ public class RobotContainer {
 
         // Coral Intake Controls
         m_driverController.button(ButtonConstants.xboxRB)
-            .onTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds));
+            .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds));
         m_driverController.button(ButtonConstants.xboxLB)
-            .onTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds));
+            .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds));
         m_driverController.button(ButtonConstants.xboxX)
             .onTrue(coralIntake.setCoralIntakeRoller(0));
     }
@@ -57,7 +57,8 @@ public class RobotContainer {
         return new SequentialCommandGroup(
             new RunCommand(() -> m_robotDrive.drive(0.2, 0, 0, false), m_robotDrive)
                 .withTimeout(3),
-            new InstantCommand(() -> m_robotDrive.drive(0, 0, 0, false)) // Stop movement
+            new InstantCommand(() -> m_robotDrive.drive(0.0, 0, 0, false)) // Stop movement
+            
         );
     }
 }
