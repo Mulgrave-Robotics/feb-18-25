@@ -28,14 +28,14 @@ public final class Constants {
         public static final double kBackRightChassisAngularOffset = Math.PI / 2;
 
         public static final int kFrontLeftDrivingCanId = 5;
-        public static final int kRearLeftDrivingCanId = 7;
-        public static final int kFrontRightDrivingCanId = 4;
-        public static final int kRearRightDrivingCanId = 8;
+        public static final int kRearLeftDrivingCanId = 4;
+        public static final int kFrontRightDrivingCanId = 2;
+        public static final int kRearRightDrivingCanId = 1;
 
         public static final int kFrontLeftTurningCanId = 6;
-        public static final int kRearLeftTurningCanId = 2;
-        public static final int kFrontRightTurningCanId = 3;
-        public static final int kRearRightTurningCanId = 1;
+        public static final int kRearLeftTurningCanId = 3;
+        public static final int kFrontRightTurningCanId = 7;
+        public static final int kRearRightTurningCanId = 8;
 
         public static final boolean kGyroReversed = false;
     }
