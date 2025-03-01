@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+// import com.revrobotics.AbsoluteEncoder;
+//import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
+//import com.revrobotics.spark.config.SparkMaxConfig;
 import com.revrobotics.spark.config.SparkFlexConfig;
 import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkBase.PersistMode;
@@ -11,6 +14,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+// import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
@@ -18,89 +22,84 @@ public class ElevatorSubsystem extends SubsystemBase {
     private final SparkFlex upperMotor;
     private final SparkFlex lowerMotor;
     private final RelativeEncoder encoder;
-    private int currentLevel;
+    private double currentHeight;
 
     public ElevatorSubsystem() {
-        // ✅ Initialize motors with correct CAN IDs
         upperMotor = new SparkFlex(ElevatorConstants.elevatorUpperMotorID, MotorType.kBrushless);
         lowerMotor = new SparkFlex(ElevatorConstants.elevatorLowerMotorID, MotorType.kBrushless);
 
-        // ✅ Configure motors
-        SparkFlexConfig globalConfig = new SparkFlexConfig();
-        SparkFlexConfig lowerMotorConfig = new SparkFlexConfig();
+        currentHeight = 0;
 
-        globalConfig
-                .smartCurrentLimit(40) // Current limit
-                .idleMode(IdleMode.kBrake); // Brake when not moving
-
-        lowerMotorConfig
-                .apply(globalConfig)
-                .inverted(true); // Invert lower motor to sync movement
+        // Motor Configuration
+        SparkFlexConfig motorConfig = new SparkFlexConfig();
+        motorConfig
+                .smartCurrentLimit(40) // Set current limit to 40A
+                .idleMode(IdleMode.kBrake);
 
         // ✅ Apply configurations
-        upperMotor.configure(globalConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        lowerMotor.configure(lowerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        upperMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        lowerMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // ✅ Encoder setup
         encoder = upperMotor.getEncoder();
+        // get positive direction motor encoder
+        // positive one should be the motor that is not sucky
         encoder.setPosition(0);
-        currentLevel = 0;
     }
 
-    // ✅ Convert encoder position to inches
     public double getPositionInches() {
-        return encoder.getPosition() * ElevatorConstants.kPositionConversionFactor;
+        // 0.9848 is sin(79.99), converts slanted height into vertical height
+        return (0.9848 * encoder.getPosition() * (2 * Math.PI * ElevatorConstants.kGearRatio));
     }
 
-    // ✅ Move elevator to a specified height
-    public void moveToHeight(double targetHeight) {
-        double currentHeight = getPositionInches();
-        double speed = (targetHeight > currentHeight) ? ElevatorConstants.kMaxSpeedPercentage : -ElevatorConstants.kMaxSpeedPercentage;
+    public void reachLevel(double targetHeight) {
 
-        upperMotor.set(speed);
-        lowerMotor.set(speed);
+        currentHeight = getPositionInches();
+        double speed = 0;
 
-        SmartDashboard.putNumber("Elevator Target Height", targetHeight);
-        SmartDashboard.putNumber("Elevator Speed", speed);
-        SmartDashboard.putNumber("Current Elevator Height", currentHeight);
-    }
+        if (targetHeight > currentHeight) {
 
-    // ✅ Command to move the elevator to a specific level
-    public Command goToLevel(int level) {
-        double targetHeight;
-        switch (level) {
-            case 1: targetHeight = ElevatorConstants.vL1Height; break;
-            case 2: targetHeight = ElevatorConstants.vL2Height; break;
-            case 3: targetHeight = ElevatorConstants.vL3Height; break;
-            case 4: targetHeight = ElevatorConstants.vL4Height; break;
-            default: targetHeight = ElevatorConstants.vL1Height; // Default to base level
+            speed = ElevatorConstants.kMaxSpeedPercentage * 1.0;
+
         }
 
-        return run(() -> moveToHeight(targetHeight))
-                .until(() -> MathUtil.isNear(getPositionInches(), targetHeight, ElevatorConstants.kElevatorDefaultTolerance))
+        else if (targetHeight < currentHeight) {
+            speed = ElevatorConstants.kMaxSpeedPercentage * -1.0;
+
+        }
+
+        else {
+            SmartDashboard.putString("elevator height status", "Elevator is already at wanted height!");
+        }
+
+        upperMotor.set(speed);
+        lowerMotor.set(speed); // Sync lower motor with upper motor
+        SmartDashboard.putNumber("speed", speed);
+        SmartDashboard.putNumber("currentHeight", currentHeight);
+
+    }
+
+    public Command setLevel(double targetHeight) {
+        return run(() -> reachLevel(targetHeight));
+    }
+
+    public Command moveTo(double targetHeight) {
+        SmartDashboard.putNumber("targetHeight", targetHeight);
+
+        return setLevel(targetHeight)
+                .until(() -> aroundHeight(targetHeight))
                 .andThen(() -> {
-                    upperMotor.set(0);
-                    lowerMotor.set(0);
-                    currentLevel = level;
+                    upperMotor.set(0.0);
+                    lowerMotor.set(0.0);
                 });
+
     }
 
-
-    public Command moveUp() {
-        int targetLevel = Math.min(currentLevel + 1, ElevatorConstants.kMaxLevel);
-        return goToLevel(targetLevel);
+    public boolean aroundHeight(double height) {
+        return aroundHeight(height, ElevatorConstants.kElevatorDefaultTolerance);
     }
 
-
-    public Command moveDown() {
-        int targetLevel = Math.max(currentLevel - 1, ElevatorConstants.kMinLevel);
-        return goToLevel(targetLevel);
-    }
-
-
-    @Override
-    public void periodic() {
-        SmartDashboard.putNumber("Elevator Position", getPositionInches());
-        SmartDashboard.putNumber("Elevator Level", currentLevel);
+    public boolean aroundHeight(double height, double tolerance) {
+        return MathUtil.isNear(height, getPositionInches(), tolerance);
     }
 }

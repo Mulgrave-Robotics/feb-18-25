@@ -75,24 +75,24 @@ public final class Constants {
 
     // 🔹 Elevator system constants
     public static final class ElevatorConstants {
-        public static final int elevatorUpperMotorID = 9;  // ✅ Make sure this is here
+        public static final int elevatorUpperMotorID = 9; // ✅ Make sure this is here
         public static final int elevatorLowerMotorID = 10; // ✅ Make sure this is here
-        
+
         public static final double kElevatorDefaultTolerance = 1.0; // ✅ Add this if missing
 
         // ✅ Make sure these heights exist and are properly defined
-        public static final double vL1Height = 0.0;  // Base Level
+        public static final double vL1Height = 0.0; // Base Level
         public static final double vL2Height = 3.17; // Level 2
         public static final double vL3Height = 19.04; // Level 3
         public static final double vL4Height = 43.32; // Level 4
-    
+
         // ✅ Gear ratio and conversion factors
         public static final double kGearRatio = 0.255;
         public static final double kPositionConversionFactor = 1.0;
         public static final double kZeroOffset = 0.0;
         public static final double kEncoderCountsPerRotation = 42;
         public static final double kMaxSpeedPercentage = 0.5;
-    
+
         // ✅ PID Constants
         public static final double kP = 0.1;
         public static final double kI = 0;
@@ -101,7 +101,6 @@ public final class Constants {
         public static final int kMaxLevel = 2;
         public static final int kMinLevel = 0;
     }
-    
 
     // 🔹 Motor constants for NEO motors
     public static final class NeoMotorConstants {
@@ -132,12 +131,10 @@ public final class Constants {
     public static final class IntakeConstants {
         public static final int algaeUpperMotorID = 21;
         public static final int coralMotorID = 11;
-        
-        // ✅ Define Coral Intake Speeds
-        public static final double CoralIntakeSpeeds = 0.5;  // Adjust value as needed
-        public static final double CoralOuttakeSpeeds = -0.5; // Adjust value as needed
 
-        
+        // ✅ Define Coral Intake Speeds
+        public static final double CoralIntakeSpeeds = -0.2; // Adjust value as needed
+        public static final double CoralOuttakeSpeeds = -0.35; // Adjust value as needed
 
         public static final double AlgaeIntakeSpeed = 0.1;
         public static final double AlgaeOuttakeSpeed = -0.1;
