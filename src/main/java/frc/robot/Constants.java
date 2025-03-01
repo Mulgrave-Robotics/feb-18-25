@@ -55,7 +55,7 @@ public final class Constants {
     // 🔹 Operator input constants
     public static final class OIConstants {
         public static final int kDriverControllerPort = 0;
-        public static final double kDriveDeadband = 0.05;
+        public static final double kDriveDeadband = 0.15;
     }
 
     // 🔹 Autonomous settings
