@@ -116,11 +116,11 @@ public class DriveSubsystem extends SubsystemBase {
         double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
 
         // WITHOUT FIELD ORITENTATED DRIVE
-        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-            fieldRelative
-                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-                Rotation2d.fromDegrees(m_gyro.getYaw()))
-                : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+        // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+        //     fieldRelative
+        //         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
+        //         Rotation2d.fromDegrees(m_gyro.getYaw()))
+        //         : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
 
         // FIELD ORITNETATED DRIVE
         // var chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
@@ -131,20 +131,11 @@ public class DriveSubsystem extends SubsystemBase {
         // );
 
         // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
-       
-        // NEW
-        // var chassisSpeeds2 = ChassisSpeeds.fromFieldRelativeSpeeds(
-        //     xSpeedDelivered, 
-        //     ySpeedDelivered, 
-        //     rotDelivered, 
-        //     Rotation2d.fromDegrees(m_gyro.getAngle())
-        // );
 
-
-        // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        // fieldRelative
-        // ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(m_gyro.getAngle()))
-        // : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+        fieldRelative
+        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(m_gyro.getAngle()))
+        : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
         // END
 
 
