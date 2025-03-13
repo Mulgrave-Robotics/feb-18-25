@@ -20,13 +20,11 @@ import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
     private final SparkFlex upperMotor;
-    private final SparkFlex lowerMotor;
     private final RelativeEncoder encoder;
     private double currentHeight;
 
     public ElevatorSubsystem() {
         upperMotor = new SparkFlex(ElevatorConstants.elevatorUpperMotorID, MotorType.kBrushless);
-        lowerMotor = new SparkFlex(ElevatorConstants.elevatorLowerMotorID, MotorType.kBrushless);
 
         currentHeight = 0;
 
@@ -38,7 +36,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         // ✅ Apply configurations
         upperMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        lowerMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // ✅ Encoder setup
         encoder = upperMotor.getEncoder();
@@ -73,7 +70,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         }
 
         upperMotor.set(speed);
-        lowerMotor.set(speed); // Sync lower motor with upper motor
+
         SmartDashboard.putNumber("speed", speed);
         SmartDashboard.putNumber("currentHeight", currentHeight);
 
@@ -88,10 +85,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         return setLevel(targetHeight)
                 .until(() -> aroundHeight(targetHeight))
-                .andThen(() -> {
-                    upperMotor.set(0.0);
-                    lowerMotor.set(0.0);
-                });
+                .andThen(() -> {upperMotor.set(0.0);});
 
     }
 

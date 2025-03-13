@@ -12,69 +12,86 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.coralIntake;
+import frc.robot.subsystems.HangSubsystem;
 
 public class RobotContainer {
-        private final DriveSubsystem m_robotDrive = new DriveSubsystem();
-        private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+    private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+    private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
+    private final CoralIntakeSubsystem coralIntake = new CoralIntakeSubsystem();
+    private final HangSubsystem m_hang = new HangSubsystem(); // ✅ Hang subsystem
 
-        private final CommandXboxController m_driverController = new CommandXboxController(
-                        OIConstants.kDriverControllerPort);
-        private final CoralIntakeSubsystem coralIntake = new CoralIntakeSubsystem();
-        // private final coralIntake coralIntakeCommand = new coralIntake(coralIntake);
+    // ✅ Two Controllers
+    private final CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
+    private final CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kSecondaryControllerPort);
 
-        private final double speedMultiplier = 0.7;
+    // Speed multipliers
+    private double speedMultiplier = 0.3;
+    private double elevatorSpeed = 0.7; // Default speed
 
-        public RobotContainer() {
-                configureButtonBindings();
+    public RobotContainer() {
+        configureButtonBindings();
 
-                // Default driving control using Xbox controller
-                m_robotDrive.setDefaultCommand(
-                                new RunCommand(
-                                                () -> m_robotDrive.drive(
-                                                                -MathUtil.applyDeadband(m_driverController.getLeftY(),
-                                                                                OIConstants.kDriveDeadband)
-                                                                                * speedMultiplier, // Y-axis:
-                                                                                                   // forward/backward
-                                                                -MathUtil.applyDeadband(m_driverController.getLeftX(),
-                                                                                OIConstants.kDriveDeadband)
-                                                                                * speedMultiplier, // X-axis: left/right
-                                                                -MathUtil.applyDeadband(m_driverController.getRightX(),
-                                                                                OIConstants.kDriveDeadband)
-                                                                                * speedMultiplier, // Right stick:
-                                                                                                   // rotation
-                                                                false),
-                                                m_robotDrive));
-        }
+        // Default Driving Control (Main Controller)
+        m_robotDrive.setDefaultCommand(
+            new RunCommand(
+                () -> m_robotDrive.drive(
+                    -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * speedMultiplier,
+                    -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * speedMultiplier,
+                    -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband) * speedMultiplier,
+                    false
+                ),
+                m_robotDrive
+            )
+        );
+    }
 
-        private void configureButtonBindings() {
-                // Elevator Controls
-                m_driverController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));
-                m_driverController.button(ButtonConstants.xboxB).onTrue(m_elevator.moveTo(ElevatorConstants.vL2Height));
-                m_driverController.button(ButtonConstants.xboxA).onTrue(m_elevator.moveTo(ElevatorConstants.vL1Height));
+    private void configureButtonBindings() {
+        // ✅ **Main Controller (Driver) - Driving & Coral Intake**
+        m_driverController.leftTrigger()
+            .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds))
+            .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
 
-                // Coral Intake Controls
+        m_driverController.rightTrigger()
+            .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds))
+            .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
 
-                m_driverController.button(ButtonConstants.xboxRB)
-                                .whileTrue(coralIntake
-                                                .setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds));
-                m_driverController.button(ButtonConstants.xboxLB)
-                                .whileTrue(coralIntake
-                                                .setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds));
-                m_driverController.button(ButtonConstants.xboxX).onTrue(coralIntake.setCoralIntakeRoller(0));
-        }
+        m_driverController.leftBumper()
+            .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds * 0.5))
+            .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
 
-        // Autonomous command: Move forward for 3 seconds
-        public Command getAutonomousCommand() {
-                return new SequentialCommandGroup(
-                                new RunCommand(() -> m_robotDrive.drive(0.2, 0, 0, false), m_robotDrive)
-                                                .withTimeout(3),
-                                new InstantCommand(() -> m_robotDrive.drive(0.0, 0, 0, false)), // Stop movement
-                                coralIntake
-                                                .setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds)
-                                                .withTimeout(2),
-                                new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))
+        // ✅ **Secondary Controller (Operator) - Elevator & Hang**
+        m_operatorController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));
+        m_operatorController.button(ButtonConstants.xboxB).onTrue(m_elevator.moveTo(ElevatorConstants.vL2Height));
+        m_operatorController.button(ButtonConstants.xboxA).onTrue(m_elevator.moveTo(ElevatorConstants.vL1Height));
+        m_operatorController.button(ButtonConstants.xboxX).onTrue(m_elevator.moveTo(ElevatorConstants.vL4Height));
 
-                );
-        }
+        // ✅ **Hang System - Secondary Controller**
+        m_operatorController.rightTrigger()
+            .whileTrue(new RunCommand(() -> m_hang.hangDown(), m_hang))
+            .onFalse(new InstantCommand(() -> m_hang.stop()));
+
+        m_operatorController.leftTrigger()
+            .whileTrue(new RunCommand(() -> m_hang.hangUp(), m_hang))
+            .onFalse(new InstantCommand(() -> m_hang.stop()));
+
+        // ✅ **D-Pad Up - Change Elevator Speed**
+        m_operatorController.povUp().onTrue(new InstantCommand(() -> {
+            if (elevatorSpeed == 0.9) {
+                elevatorSpeed = 0.3; // Switch to slow speed
+            } else {
+                elevatorSpeed = 0.9; // Switch to fast speed
+            }
+            System.out.println("Elevator Speed Changed: " + elevatorSpeed);
+        }));
+    }
+
+    public Command getAutonomousCommand() {
+        return new SequentialCommandGroup(
+            new RunCommand(() -> m_robotDrive.drive(0.2, 0, 0, false), m_robotDrive)
+                .withTimeout(3),
+            new InstantCommand(() -> m_robotDrive.drive(0.0, 0, 0, false)), // Stop movement
+            coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds).withTimeout(2),
+            new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))
+        );
+    }
 }

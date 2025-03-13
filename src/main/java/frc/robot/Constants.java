@@ -5,7 +5,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
-import edu.wpi.first.math.geometry.Translation3d;
+// import edu.wpi.first.math.geometry.Translation3d;
 
 public final class Constants {
     // 🔹 Drive system constants
@@ -55,6 +55,7 @@ public final class Constants {
     // 🔹 Operator input constants
     public static final class OIConstants {
         public static final int kDriverControllerPort = 0;
+        public static final int kSecondaryControllerPort = 1;
         public static final double kDriveDeadband = 0.15;
     }
 
@@ -76,7 +77,7 @@ public final class Constants {
     // 🔹 Elevator system constants
     public static final class ElevatorConstants {
         public static final int elevatorUpperMotorID = 9; // ✅ Make sure this is here
-        public static final int elevatorLowerMotorID = 10; // ✅ Make sure this is here
+        // public static final int elevatorLowerMotorID = 10; // ✅ Make sure this is here
 
         public static final double kElevatorDefaultTolerance = 1.0; // ✅ Add this if missing
 
@@ -158,5 +159,9 @@ public final class Constants {
         public static final double LEFT_Y_DEADBAND = 0.1;
         public static final double RIGHT_X_DEADBAND = 0.1;
         public static final double TURN_CONSTANT = 6;
+    }
+
+    public static final class HangConstants {
+        public static final int HangMotorID = 10;
     }
 }

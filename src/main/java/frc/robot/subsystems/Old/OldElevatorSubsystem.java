@@ -16,14 +16,12 @@ import frc.robot.Constants.ElevatorConstants;
 
 public class OldElevatorSubsystem extends SubsystemBase {
     private final SparkFlex upperMotor;
-    private final SparkFlex lowerMotor;
     private final RelativeEncoder encoder;
     private int currentLevel;
 
     public OldElevatorSubsystem() {
         // ✅ Initialize motors with correct CAN IDs
         upperMotor = new SparkFlex(ElevatorConstants.elevatorUpperMotorID, MotorType.kBrushless);
-        lowerMotor = new SparkFlex(ElevatorConstants.elevatorLowerMotorID, MotorType.kBrushless);
 
         // ✅ Configure motors
         SparkFlexConfig globalConfig = new SparkFlexConfig();
@@ -39,7 +37,7 @@ public class OldElevatorSubsystem extends SubsystemBase {
 
         // ✅ Apply configurations
         upperMotor.configure(globalConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-        lowerMotor.configure(lowerMotorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
 
         // ✅ Encoder setup
         encoder = upperMotor.getEncoder();
@@ -59,7 +57,7 @@ public class OldElevatorSubsystem extends SubsystemBase {
                 : -ElevatorConstants.kMaxSpeedPercentage;
 
         upperMotor.set(speed);
-        lowerMotor.set(speed);
+      
 
         SmartDashboard.putNumber("Elevator Target Height", targetHeight);
         SmartDashboard.putNumber("Elevator Speed", speed);
@@ -91,7 +89,6 @@ public class OldElevatorSubsystem extends SubsystemBase {
                         ElevatorConstants.kElevatorDefaultTolerance))
                 .andThen(() -> {
                     upperMotor.set(0);
-                    lowerMotor.set(0);
                     currentLevel = level;
                 });
     }
