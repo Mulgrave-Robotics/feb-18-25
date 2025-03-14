@@ -102,7 +102,6 @@ public class DriveSubsystem extends SubsystemBase {
     }
 
     public void drive(double xSpeed, double ySpeed, double rot, boolean fieldRelative) {
-        // ✅ Apply Acceleration Smoothing
         xSpeed = applyAccelerationRamp(prevXSpeed, xSpeed);
         ySpeed = applyAccelerationRamp(prevYSpeed, ySpeed);
         rot = applyAccelerationRamp(prevRotSpeed, rot);
@@ -121,14 +120,6 @@ public class DriveSubsystem extends SubsystemBase {
         //         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
         //         Rotation2d.fromDegrees(m_gyro.getYaw()))
         //         : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
-
-        // FIELD ORITNETATED DRIVE
-        // var chassisSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(
-        // xSpeedDelivered, 
-        // ySpeedDelivered, 
-        // rotDelivered,
-        // Rotation2d.fromDegrees(-m_gyro.getAngle(IMUAxis.kZ)) // Use negative to correct for gyro rotation
-        // );
 
         // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
 

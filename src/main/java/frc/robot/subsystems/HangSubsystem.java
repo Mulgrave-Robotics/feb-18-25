@@ -32,16 +32,15 @@ public class HangSubsystem extends SubsystemBase {
     // ✅ Move hang down (clamp)
     public Command hangDown() {
         return run(() -> {
-            hangMotor.set(1.0); // Adjust speed as needed
-            SmartDashboard.putString("Hang Status", "Clamping Down");
+            hangMotor.set(1.0);
         });
     }
 
     // ✅ Move hang up (release)
     public Command hangUp() {
         return run(() -> {
-            hangMotor.set(-1.0); // Adjust speed as needed
-            SmartDashboard.putString("Hang Status", "Releasing Up");
+            hangMotor.set(-1.0); 
+          
         });
     }
 
@@ -49,7 +48,6 @@ public class HangSubsystem extends SubsystemBase {
     public Command stop() {
         return run(() -> {
             hangMotor.set(0);
-            SmartDashboard.putString("Hang Status", "Stopped");
         });
     }
 

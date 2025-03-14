@@ -18,15 +18,14 @@ public class RobotContainer {
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
     private final CoralIntakeSubsystem coralIntake = new CoralIntakeSubsystem();
-    private final HangSubsystem m_hang = new HangSubsystem(); // ✅ Hang subsystem
+    private final HangSubsystem m_hang = new HangSubsystem(); 
 
-    // ✅ Two Controllers
+    // Controllers
     private final CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
     private final CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kSecondaryControllerPort);
 
     // Speed multipliers
-    private double speedMultiplier = 0.3;
-    private double elevatorSpeed = 0.7; // Default speed
+    private double speedMultiplier = 0.7;
 
     public RobotContainer() {
         configureButtonBindings();
@@ -38,7 +37,7 @@ public class RobotContainer {
                     -MathUtil.applyDeadband(m_driverController.getLeftY(), OIConstants.kDriveDeadband) * speedMultiplier,
                     -MathUtil.applyDeadband(m_driverController.getLeftX(), OIConstants.kDriveDeadband) * speedMultiplier,
                     -MathUtil.applyDeadband(m_driverController.getRightX(), OIConstants.kDriveDeadband) * speedMultiplier,
-                    false
+                    true
                 ),
                 m_robotDrive
             )
@@ -46,7 +45,8 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
-        // ✅ **Main Controller (Driver) - Driving & Coral Intake**
+
+        // MAIN KEYBINDS
         m_driverController.leftTrigger()
             .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds))
             .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
@@ -59,13 +59,16 @@ public class RobotContainer {
             .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds * 0.5))
             .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
 
-        // ✅ **Secondary Controller (Operator) - Elevator & Hang**
+
+        // OPPERATOR KEYBINDS
+
+        // Elevator & Hang
         m_operatorController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));
         m_operatorController.button(ButtonConstants.xboxB).onTrue(m_elevator.moveTo(ElevatorConstants.vL2Height));
         m_operatorController.button(ButtonConstants.xboxA).onTrue(m_elevator.moveTo(ElevatorConstants.vL1Height));
         m_operatorController.button(ButtonConstants.xboxX).onTrue(m_elevator.moveTo(ElevatorConstants.vL4Height));
 
-        // ✅ **Hang System - Secondary Controller**
+        // Hang System
         m_operatorController.rightTrigger()
             .whileTrue(new RunCommand(() -> m_hang.hangDown(), m_hang))
             .onFalse(new InstantCommand(() -> m_hang.stop()));
@@ -74,14 +77,14 @@ public class RobotContainer {
             .whileTrue(new RunCommand(() -> m_hang.hangUp(), m_hang))
             .onFalse(new InstantCommand(() -> m_hang.stop()));
 
-        // ✅ **D-Pad Up - Change Elevator Speed**
+        // D-Pad Up
         m_operatorController.povUp().onTrue(new InstantCommand(() -> {
-            if (elevatorSpeed == 0.9) {
-                elevatorSpeed = 0.3; // Switch to slow speed
+            if (speedMultiplier == 0.7) {
+                speedMultiplier = 0.3; // Switch to slow speed
             } else {
-                elevatorSpeed = 0.9; // Switch to fast speed
+                speedMultiplier = 0.7; // Switch to fast speed
             }
-            System.out.println("Elevator Speed Changed: " + elevatorSpeed);
+            System.out.println("Elevator Speed Changed: " + speedMultiplier);
         }));
     }
 

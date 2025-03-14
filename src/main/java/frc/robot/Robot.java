@@ -20,15 +20,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.cscore.CvSink;
 import edu.wpi.first.cscore.CvSource;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the
- * name of this class or
- * the package after creating this project, you must also update the
- * build.gradle file in the
- * project.
- */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
@@ -40,57 +31,18 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     CameraServer.startAutomaticCapture();
-    /*
-     * camera1 = CameraServer.startAutomaticCapture(0);
-     * camera1.setResolution(320, 240);
-     * camera1.setFPS(24);
-     * 
-     * camera2 = CameraServer.startAutomaticCapture(1);
-     * camera2.setResolution(320, 240);
-     * camera2.setFPS(24);
-     * 
-     * server = CameraServer.getServer();
-     * camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-     * camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
-     */
   }
 
-  /**
-   * This function is run when the robot is first started up and should be used
-   * for any
-   * initialization code.
-   */
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
-    // autonomous chooser on the dashboard.
-    // Start USB Camera
     m_robotContainer = new RobotContainer();
-    // Display Limelight camera feed in Shuffleboard
-    // SmartDashboard.putString("Limelight Stream", "http://10.TE.AM.11:5800/"); //
-    // Replace with actual Limelight IP
-    // SmartDashboard.putData("Limelight Camera",
-    // CameraServer.getInstance().addServer("limelight"));
-
   }
 
-  /**
-   * This function is called every 20 ms, no matter the mode. Use this for items
-   * like diagnostics
-   * that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>
-   * This runs after the mode specific periodic functions, but before LiveWindow
-   * and
-   * SmartDashboard integrated updating.
-   */
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
   }
@@ -107,30 +59,17 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    /*
-     * String autoSelected = SmartDashboard.getString("Auto Selector",
-     * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-     * = new MyAutoCommand(); break; case "Default Auto": default:
-     * autonomousCommand = new ExampleCommand(); break; }
-     */
-
-    // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
   }
 
-  /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
   }
 
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

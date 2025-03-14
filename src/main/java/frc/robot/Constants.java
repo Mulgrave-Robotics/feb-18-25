@@ -76,10 +76,9 @@ public final class Constants {
 
     // 🔹 Elevator system constants
     public static final class ElevatorConstants {
-        public static final int elevatorUpperMotorID = 9; // ✅ Make sure this is here
-        // public static final int elevatorLowerMotorID = 10; // ✅ Make sure this is here
+        public static final int elevatorUpperMotorID = 9;
 
-        public static final double kElevatorDefaultTolerance = 1.0; // ✅ Add this if missing
+        public static final double kElevatorDefaultTolerance = 1.0;
 
         // ✅ Make sure these heights exist and are properly defined
         public static final double vL1Height = 0.0; // Base Level
