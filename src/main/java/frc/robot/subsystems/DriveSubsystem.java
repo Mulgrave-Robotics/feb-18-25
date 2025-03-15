@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.studica.frc.AHRS;
 import com.studica.frc.AHRS.NavXComType;
 
+import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.I2C.Port;
+
 import frc.robot.Constants.DriveConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -38,7 +41,7 @@ public class DriveSubsystem extends SubsystemBase {
         DriveConstants.kBackRightChassisAngularOffset);
 
     // private final AHRS m_gyro = new AHRS(edu.wpi.first.wpilibj.SPI.Port.kMXP);
-    private final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
+    final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
 
 
     // ✅ Acceleration Control Variables
@@ -65,23 +68,23 @@ public class DriveSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
-    m_odometry.update(
-        Rotation2d.fromDegrees(m_gyro.getAngle()),
-        new SwerveModulePosition[] {
-            m_frontLeft.getPosition(),
-            m_frontRight.getPosition(),
-            m_rearLeft.getPosition(),
-            m_rearRight.getPosition()
-        });
+        m_odometry.update(
+            Rotation2d.fromDegrees(m_gyro.getAngle()),
+            new SwerveModulePosition[] {
+                m_frontLeft.getPosition(),
+                m_frontRight.getPosition(),
+                m_rearLeft.getPosition(),
+                m_rearRight.getPosition()
+            });
 
-    // 🔹 Print to console
-    System.out.println("AHRS Gyro Angle: " + m_gyro.getAngle());
-    System.out.println("AHRS Gyro Yaw: " + m_gyro.getYaw());
+        // 🔹 Print to console
+        System.out.println("AHRS Gyro Angle: " + m_gyro.getAngle());
+        System.out.println("AHRS Gyro Yaw: " + m_gyro.getYaw());
 
-    // 🔹 Log to SmartDashboard
-    SmartDashboard.putNumber("AHRS Gyro Angle", m_gyro.getAngle());
-    SmartDashboard.putNumber("AHRS Gyro Yaw", m_gyro.getYaw());
-}
+        // 🔹 Log to SmartDashboard
+        SmartDashboard.putNumber("AHRS Gyro Angle", m_gyro.getAngle());
+        SmartDashboard.putNumber("AHRS Gyro Yaw", m_gyro.getYaw());
+    }
 
 
     public Pose2d getPose() {
