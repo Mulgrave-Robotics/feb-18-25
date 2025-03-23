@@ -87,7 +87,7 @@ public final class Constants {
         public static final double vL4Height = 43.32; // Level 4
 
         // ✅ Gear ratio and conversion factors
-        public static final double kGearRatio = 0.255;
+        public static final double kGearRatio = 0.06375;
         public static final double kPositionConversionFactor = 1.0;
         public static final double kZeroOffset = 0.0;
         public static final double kEncoderCountsPerRotation = 42;
