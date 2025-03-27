@@ -26,7 +26,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     public ElevatorSubsystem() {
         upperMotor = new SparkFlex(ElevatorConstants.elevatorUpperMotorID, MotorType.kBrushless);
 
-        currentHeight = 0;
+        currentHeight = 0.0;
 
         // Motor Configuration
         SparkFlexConfig motorConfig = new SparkFlexConfig();
@@ -52,16 +52,16 @@ public class ElevatorSubsystem extends SubsystemBase {
     public void reachLevel(double targetHeight) {
 
         currentHeight = getPositionInches();
-        double speed = 0;
+        double speed = 0.0;
 
         if (targetHeight > currentHeight) {
 
-            speed = ElevatorConstants.kMaxSpeedPercentage * 1.0;
+            speed = ElevatorConstants.kMaxSpeedPercentage * -1.0;
 
         }
 
         else if (targetHeight < currentHeight) {
-            speed = ElevatorConstants.kMaxSpeedPercentage * -1.0;
+            speed = ElevatorConstants.kMaxSpeedPercentage * 1.0;
 
         }
 
