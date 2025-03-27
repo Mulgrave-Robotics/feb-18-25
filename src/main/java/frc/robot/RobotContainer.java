@@ -27,6 +27,8 @@ public class RobotContainer {
     // Speed multipliers
     private double speedMultiplier = 0.7;
 
+    private boolean lastCameraSwitchState = false; // False is for video 1
+
     public RobotContainer() {
         configureButtonBindings();
 
@@ -43,6 +45,13 @@ public class RobotContainer {
             )
         );
     }
+
+    public boolean shouldSwitchCameras() {
+        boolean current = m_operatorController.button(ButtonConstants.xboxA).getAsBoolean();
+        boolean shouldSwitch = current && !lastCameraSwitchState;
+        lastCameraSwitchState = current;
+        return shouldSwitch;
+    }        
 
     private void configureButtonBindings() {
 
@@ -61,6 +70,7 @@ public class RobotContainer {
 
 
         // OPPERATOR KEYBINDS
+                
 
         // Elevator & Hang
         m_operatorController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));

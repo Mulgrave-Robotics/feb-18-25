@@ -24,9 +24,11 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-  UsbCamera camera1;
-  UsbCamera camera2;
-  VideoSink server;
+
+  private UsbCamera camera1;
+  private UsbCamera camera2;
+  private VideoSink server;
+  private boolean usingCamera1 = true;
   Joystick joy1 = new Joystick(0);
 
   public Robot() {
@@ -36,11 +38,32 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     m_robotContainer = new RobotContainer();
+
+    camera1 = CameraServer.startAutomaticCapture(0);
+    camera2 = CameraServer.startAutomaticCapture(1);
+
+    camera1.setResolution(320, 240);
+    camera2.setResolution(320, 240);
+
+    camera1.setFPS(20);
+    camera2.setFPS(20);
+
+    camera1.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+    camera2.setConnectionStrategy(ConnectionStrategy.kKeepOpen);
+
+    server = CameraServer.getServer();
+    server.setSource(camera1); 
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+    if (m_robotContainer.shouldSwitchCameras()) {
+      usingCamera1 = !usingCamera1;
+      server.setSource(usingCamera1 ? camera1 : camera2);
+      System.out.println("📸 Switched to " + (usingCamera1 ? "Camera 1" : "Camera 2"));
+    }
   }
 
   @Override
