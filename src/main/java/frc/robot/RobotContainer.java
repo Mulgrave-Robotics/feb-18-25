@@ -68,16 +68,17 @@ public class RobotContainer {
             .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds * 0.5))
             .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
 
-            m_driverController.button(ButtonConstants.xboxX).onTrue(coralIntake.setCoralIntakeRoller(0));
+        m_driverController.button(ButtonConstants.xboxX).onTrue(coralIntake.setCoralIntakeRoller(0));
+        // m_driverController.button(ButtonConstants.xboxY).onTrue(coralIntake.setCoralIntakeRoller(0));
 
         // OPPERATOR KEYBINDS
                 
 
         // Elevator & Hang
-        m_operatorController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));
-        m_operatorController.button(ButtonConstants.xboxB).onTrue(m_elevator.moveTo(ElevatorConstants.vL2Height));
-        m_operatorController.button(ButtonConstants.xboxA).onTrue(m_elevator.moveTo(ElevatorConstants.vL1Height));
-        m_operatorController.button(ButtonConstants.xboxX).onTrue(m_elevator.moveTo(ElevatorConstants.vL4Height));
+        m_driverController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));
+        m_driverController.button(ButtonConstants.xboxB).onTrue(m_elevator.moveTo(ElevatorConstants.vL2Height));
+        m_driverController.button(ButtonConstants.xboxA).onTrue(m_elevator.moveTo(ElevatorConstants.vL1Height));
+    
 
         // Hang System
         m_operatorController.rightTrigger()
