@@ -25,7 +25,7 @@ public class RobotContainer {
     private final CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kSecondaryControllerPort);
 
     // Speed multipliers
-    private double speedMultiplier = 0.7;
+    private double speedMultiplier = 0.3;
 
     private boolean lastCameraSwitchState = false; // False is for video 1
 
@@ -68,6 +68,7 @@ public class RobotContainer {
             .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds * 0.5))
             .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
 
+            m_driverController.button(ButtonConstants.xboxX).onTrue(coralIntake.setCoralIntakeRoller(0));
 
         // OPPERATOR KEYBINDS
                 

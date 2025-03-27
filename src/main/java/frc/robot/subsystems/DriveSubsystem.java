@@ -42,6 +42,7 @@ public class DriveSubsystem extends SubsystemBase {
 
     // private final AHRS m_gyro = new AHRS(edu.wpi.first.wpilibj.SPI.Port.kMXP);
     final AHRS m_gyro = new AHRS(NavXComType.kMXP_SPI);
+    // System.out.println(m_gyro.getAngle());
 
 
     // ✅ Acceleration Control Variables
@@ -118,18 +119,19 @@ public class DriveSubsystem extends SubsystemBase {
         double rotDelivered = rot * DriveConstants.kMaxAngularSpeed;
 
         // WITHOUT FIELD ORITENTATED DRIVE
-        // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        //     fieldRelative
-        //         ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
-        //         Rotation2d.fromDegrees(m_gyro.getYaw()))
-        //         : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+
+        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+            fieldRelative
+                ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered,
+                Rotation2d.fromDegrees(m_gyro.getYaw() + 180))
+                : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
 
         // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(chassisSpeeds);
 
-        var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
-        fieldRelative
-        ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(m_gyro.getAngle()))
-        : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
+        // var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(
+        // fieldRelative
+        // ? ChassisSpeeds.fromFieldRelativeSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered, Rotation2d.fromDegrees(m_gyro.getAngle()))
+        // : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
         // END
 
 
