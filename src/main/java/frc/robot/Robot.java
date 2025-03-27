@@ -59,11 +59,11 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
 
-    if (m_robotContainer.shouldSwitchCameras()) {
-      usingCamera1 = !usingCamera1;
-      server.setSource(usingCamera1 ? camera1 : camera2);
-      System.out.println("📸 Switched to " + (usingCamera1 ? "Camera 1" : "Camera 2"));
-    }
+    // if (m_robotContainer.shouldSwitchCameras()) {
+    //   usingCamera1 = !usingCamera1;
+    //   server.setSource(usingCamera1 ? camera1 : camera2);
+    //   System.out.println("📸 Switched to " + (usingCamera1 ? "Camera 1" : "Camera 2"));
+    // }
   }
 
   @Override

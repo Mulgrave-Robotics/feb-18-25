@@ -22,10 +22,10 @@ public class RobotContainer {
 
     // Controllers
     private final CommandXboxController m_driverController = new CommandXboxController(OIConstants.kDriverControllerPort);
-    private final CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kSecondaryControllerPort);
+    // private final CommandXboxController m_operatorController = new CommandXboxController(OIConstants.kSecondaryControllerPort);
 
     // Speed multipliers
-    private double speedMultiplier = 0.3;
+    private double speedMultiplier = 0.5;
 
     private boolean lastCameraSwitchState = false; // False is for video 1
 
@@ -46,12 +46,12 @@ public class RobotContainer {
         );
     }
 
-    public boolean shouldSwitchCameras() {
-        boolean current = m_operatorController.button(ButtonConstants.xboxA).getAsBoolean();
-        boolean shouldSwitch = current && !lastCameraSwitchState;
-        lastCameraSwitchState = current;
-        return shouldSwitch;
-    }        
+    // public boolean shouldSwitchCameras() {
+        // boolean current = m_operatorController.button(ButtonConstants.xboxA).getAsBoolean();
+        // boolean shouldSwitch = current && !lastCameraSwitchState;
+        // lastCameraSwitchState = current;
+        // return shouldSwitch;
+    //}        
 
     private void configureButtonBindings() {
 
@@ -81,23 +81,23 @@ public class RobotContainer {
     
 
         // Hang System
-        m_operatorController.rightTrigger()
-            .whileTrue(new RunCommand(() -> m_hang.hangDown(), m_hang))
-            .onFalse(new InstantCommand(() -> m_hang.stop()));
+        // m_operatorController.rightTrigger()
+        //     .whileTrue(new RunCommand(() -> m_hang.hangDown(), m_hang))
+        //     .onFalse(new InstantCommand(() -> m_hang.stop()));
 
-        m_operatorController.leftTrigger()
-            .whileTrue(new RunCommand(() -> m_hang.hangUp(), m_hang))
-            .onFalse(new InstantCommand(() -> m_hang.stop()));
+        // m_operatorController.leftTrigger()
+        //     .whileTrue(new RunCommand(() -> m_hang.hangUp(), m_hang))
+        //     .onFalse(new InstantCommand(() -> m_hang.stop()));
 
-        // D-Pad Up
-        m_operatorController.povUp().onTrue(new InstantCommand(() -> {
-            if (speedMultiplier == 0.7) {
-                speedMultiplier = 0.3; // Switch to slow speed
-            } else {
-                speedMultiplier = 0.7; // Switch to fast speed
-            }
-            System.out.println("Elevator Speed Changed: " + speedMultiplier);
-        }));
+        // // D-Pad Up
+        // m_operatorController.povUp().onTrue(new InstantCommand(() -> {
+        //     if (speedMultiplier == 0.7) {
+        //         speedMultiplier = 0.3; // Switch to slow speed
+        //     } else {
+        //         speedMultiplier = 0.7; // Switch to fast speed
+        //     }
+        //     System.out.println("Elevator Speed Changed: " + speedMultiplier);
+        // }));
     }
 
     public Command getAutonomousCommand() {
