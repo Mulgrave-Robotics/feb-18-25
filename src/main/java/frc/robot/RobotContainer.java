@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ButtonConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OIConstants;
@@ -14,6 +16,7 @@ import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.HangSubsystem;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 public class RobotContainer {
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
@@ -95,7 +98,14 @@ public class RobotContainer {
         // m_driverController.button(ButtonConstants.xboxA).whileTrue(m_elevator.moveDown());
         // m_driverController.button(ButtonConstants.xboxB).whileTrue(m_elevator.stop());
     
-
+        new Trigger(() -> m_driverController.getHID().getPOV() == 0)
+            .onTrue(m_elevator.moveUp());
+        
+        new Trigger(() -> m_driverController.getHID().getPOV() == 180)
+            .onTrue(m_elevator.moveDown());
+        
+        new Trigger(() -> m_driverController.getHID().getPOV() == 90)
+            .onTrue(m_elevator.stop());
         // Hang System
         // m_operatorController.rightTrigger()
         //     .whileTrue(new RunCommand(() -> m_hang.hangDown(), m_hang))
