@@ -83,12 +83,17 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public Command moveTo(double targetHeight) {
         SmartDashboard.putNumber("targetHeight", targetHeight);
-
-        return setLevel(targetHeight)
-                .until(() -> aroundHeight(targetHeight))
+        if (targetHeight == 0.0) {
+            return setLevel(targetHeight)
+                .until(() -> aroundHeight(targetHeight+0.5))
                 .andThen(() -> {motor.set(0.0);});
-
+        } else {
+            return setLevel(targetHeight)
+                    .until(() -> aroundHeight(targetHeight))
+                    .andThen(() -> {motor.set(-0.01);});
+        }
     }
+
 
     public boolean aroundHeight(double height) {
         return aroundHeight(height, ElevatorConstants.kElevatorDefaultTolerance);
@@ -107,12 +112,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     public Command moveDown(){
         currentHeight = getPositionInches();
         SmartDashboard.putNumber("currentHeight", currentHeight);
-        return run(() -> {motor.set(ElevatorConstants.kMaxSpeedPercentage);});
+        return run(() -> {motor.set(0.15);});
     }
 
     public Command stop(){
         currentHeight = getPositionInches();
         SmartDashboard.putNumber("currentHeight", currentHeight);
-        return run(() -> {motor.set(0.0);});
+        return run(() -> {motor.set(-0.01);});
     }
 }

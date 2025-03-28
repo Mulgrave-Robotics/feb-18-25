@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.ButtonConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OIConstants;
+import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -18,6 +19,7 @@ public class RobotContainer {
     private final DriveSubsystem m_robotDrive = new DriveSubsystem();
     private final ElevatorSubsystem m_elevator = new ElevatorSubsystem();
     private final CoralIntakeSubsystem coralIntake = new CoralIntakeSubsystem();
+    private final AlgaeSubsystem AlgaeIntake = new AlgaeSubsystem();
     private final HangSubsystem m_hang = new HangSubsystem(); 
 
     // Controllers
@@ -57,8 +59,8 @@ public class RobotContainer {
 
         // MAIN KEYBINDS
         m_driverController.leftTrigger()
-            .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds))
-            .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
+            .whileTrue(AlgaeIntake.setAlgaeRoller(Constants.IntakeConstants.AlgaeIntakeSpeed))
+            .onFalse(new InstantCommand(() -> AlgaeIntake.setAlgaeRoller(0))); // Stops when released
 
         m_driverController.rightTrigger()
             .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds))
@@ -69,19 +71,29 @@ public class RobotContainer {
             .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
 
         m_driverController.button(ButtonConstants.xboxX).onTrue(coralIntake.setCoralIntakeRoller(0));
+        m_driverController.button(ButtonConstants.xboxRB).onTrue(AlgaeIntake.setAlgaeRoller(0));
+
+
+
+
+        
+        // m_driverController.rightBumper()
+        // .onTrue(AlgaeIntake.setAlgaeRoller(Constants.IntakeConstants.CoralIntakeSpeeds * 0.0))
+        //     .onFalse(new InstantCommand(() -> AlgaeIntake.setAlgaeRoller(0)))
+        // ;
         // m_driverController.button(ButtonConstants.xboxY).onTrue(coralIntake.setCoralIntakeRoller(0));
 
         // OPPERATOR KEYBINDS
                 
 
         // Elevator & Hang
-        // m_driverController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));
-        // m_driverController.button(ButtonConstants.xboxB).onTrue(m_elevator.moveTo(ElevatorConstants.vL2Height));
-        // m_driverController.button(ButtonConstants.xboxA).onTrue(m_elevator.moveTo(ElevatorConstants.vL1Height));
+        m_driverController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));
+        m_driverController.button(ButtonConstants.xboxB).onTrue(m_elevator.moveTo(ElevatorConstants.vL2Height));
+        m_driverController.button(ButtonConstants.xboxA).onTrue(m_elevator.moveTo(ElevatorConstants.vL1Height));
 
-        m_driverController.button(ButtonConstants.xboxY).whileTrue(m_elevator.moveUp());
-        m_driverController.button(ButtonConstants.xboxA).whileTrue(m_elevator.moveDown());
-        m_driverController.button(ButtonConstants.xboxB).whileTrue(m_elevator.stop());
+        // m_driverController.button(ButtonConstants.xboxY).whileTrue(m_elevator.moveUp());
+        // m_driverController.button(ButtonConstants.xboxA).whileTrue(m_elevator.moveDown());
+        // m_driverController.button(ButtonConstants.xboxB).whileTrue(m_elevator.stop());
     
 
         // Hang System
