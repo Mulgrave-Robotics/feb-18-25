@@ -19,12 +19,12 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ElevatorConstants;
 
 public class ElevatorSubsystem extends SubsystemBase {
-    private final SparkFlex upperMotor;
+    private final SparkFlex motor;
     private final RelativeEncoder encoder;
     private double currentHeight;
 
     public ElevatorSubsystem() {
-        upperMotor = new SparkFlex(ElevatorConstants.elevatorUpperMotorID, MotorType.kBrushless);
+        motor = new SparkFlex(ElevatorConstants.elevatorMotorID, MotorType.kBrushless);
 
         currentHeight = 0.0;
 
@@ -35,10 +35,10 @@ public class ElevatorSubsystem extends SubsystemBase {
                 .idleMode(IdleMode.kBrake);
 
         // ✅ Apply configurations
-        upperMotor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+        motor.configure(motorConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
         // ✅ Encoder setup
-        encoder = upperMotor.getEncoder();
+        encoder = motor.getEncoder();
         // get positive direction motor encoder
         // positive one should be the motor that is not sucky
         encoder.setPosition(0);
@@ -46,7 +46,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public double getPositionInches() {
         // 0.9848 is sin(79.99), converts slanted height into vertical height
-        return (0.9848 * encoder.getPosition() * (2 * Math.PI * ElevatorConstants.kGearRatio));
+        return Math.abs((0.9848 * encoder.getPosition() * (2 * Math.PI * ElevatorConstants.kGearRatio)));
     }
 
     public void reachLevel(double targetHeight) {
@@ -69,10 +69,11 @@ public class ElevatorSubsystem extends SubsystemBase {
             SmartDashboard.putString("elevator height status", "Elevator is already at wanted height!");
         }
 
-        upperMotor.set(speed);
+        motor.set(speed);
 
         SmartDashboard.putNumber("speed", speed);
         SmartDashboard.putNumber("currentHeight", currentHeight);
+        SmartDashboard.putNumber("targetHeight", targetHeight);
 
     }
 
@@ -85,7 +86,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         return setLevel(targetHeight)
                 .until(() -> aroundHeight(targetHeight))
-                .andThen(() -> {upperMotor.set(0.0);});
+                .andThen(() -> {motor.set(0.0);});
 
     }
 
@@ -95,5 +96,23 @@ public class ElevatorSubsystem extends SubsystemBase {
 
     public boolean aroundHeight(double height, double tolerance) {
         return MathUtil.isNear(height, getPositionInches(), tolerance);
+    }
+
+    public Command moveUp(){
+        currentHeight = getPositionInches();
+        SmartDashboard.putNumber("currentHeight", currentHeight);
+        return run(() -> {motor.set(-1 * ElevatorConstants.kMaxSpeedPercentage);});
+    }
+
+    public Command moveDown(){
+        currentHeight = getPositionInches();
+        SmartDashboard.putNumber("currentHeight", currentHeight);
+        return run(() -> {motor.set(ElevatorConstants.kMaxSpeedPercentage);});
+    }
+
+    public Command stop(){
+        currentHeight = getPositionInches();
+        SmartDashboard.putNumber("currentHeight", currentHeight);
+        return run(() -> {motor.set(0.0);});
     }
 }

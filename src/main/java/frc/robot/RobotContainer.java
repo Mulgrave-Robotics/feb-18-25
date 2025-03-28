@@ -78,6 +78,10 @@ public class RobotContainer {
         m_driverController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));
         m_driverController.button(ButtonConstants.xboxB).onTrue(m_elevator.moveTo(ElevatorConstants.vL2Height));
         m_driverController.button(ButtonConstants.xboxA).onTrue(m_elevator.moveTo(ElevatorConstants.vL1Height));
+
+        //m_driverController.button(ButtonConstants.xboxY).whileTrue(m_elevator.moveUp());
+        //m_driverController.button(ButtonConstants.xboxA).whileTrue(m_elevator.moveDown());
+        //m_driverController.button(ButtonConstants.xboxB).whileTrue(m_elevator.stop());
     
 
         // Hang System
@@ -108,5 +112,9 @@ public class RobotContainer {
             coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds).withTimeout(2),
             new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))
         );
+    }
+
+    public double getElevatorHeight() {
+        return m_elevator.getPositionInches();
     }
 }

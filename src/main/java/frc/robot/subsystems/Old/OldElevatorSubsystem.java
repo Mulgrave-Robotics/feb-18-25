@@ -21,7 +21,7 @@ public class OldElevatorSubsystem extends SubsystemBase {
 
     public OldElevatorSubsystem() {
         // ✅ Initialize motors with correct CAN IDs
-        upperMotor = new SparkFlex(ElevatorConstants.elevatorUpperMotorID, MotorType.kBrushless);
+        upperMotor = new SparkFlex(ElevatorConstants.elevatorMotorID, MotorType.kBrushless);
 
         // ✅ Configure motors
         SparkFlexConfig globalConfig = new SparkFlexConfig();
