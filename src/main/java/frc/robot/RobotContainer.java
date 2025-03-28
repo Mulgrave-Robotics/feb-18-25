@@ -1,11 +1,13 @@
 package frc.robot;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ButtonConstants;
 import frc.robot.Constants.ElevatorConstants;
 import frc.robot.Constants.OIConstants;
@@ -58,21 +60,21 @@ public class RobotContainer {
     private void configureButtonBindings() {
 
         // MAIN KEYBINDS
-        m_driverController.leftTrigger()
-            .whileTrue(AlgaeIntake.setAlgaeRoller(Constants.IntakeConstants.AlgaeIntakeSpeed))
+        m_driverController.rightTrigger()
+            .whileTrue(coralIntake.setCoralIntakeRoller(0))
             .onFalse(new InstantCommand(() -> AlgaeIntake.setAlgaeRoller(0))); // Stops when released
 
-        m_driverController.rightTrigger()
+        m_driverController.leftTrigger()
             .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds))
             .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
 
-        m_driverController.leftBumper()
-            .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds * 0.5))
-            .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
+        // m_driverController.leftBumper()
+        //     .whileTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds * 0.5))
+        //     .onFalse(new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))); // Stops when released
 
-        m_driverController.button(ButtonConstants.xboxX).onTrue(coralIntake.setCoralIntakeRoller(0));
+        m_driverController.button(ButtonConstants.xboxLB).onTrue(AlgaeIntake.setAlgaeRoller(Constants.IntakeConstants.AlgaeIntakeSpeed));
         m_driverController.button(ButtonConstants.xboxRB).onTrue(AlgaeIntake.setAlgaeRoller(0));
-
+        m_driverController.button(ButtonConstants.xboxX).onTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds * 0.5));
 
 
 
@@ -85,7 +87,6 @@ public class RobotContainer {
 
         // OPPERATOR KEYBINDS
                 
-
         // Elevator & Hang
         m_driverController.button(ButtonConstants.xboxY).onTrue(m_elevator.moveTo(ElevatorConstants.vL3Height));
         m_driverController.button(ButtonConstants.xboxB).onTrue(m_elevator.moveTo(ElevatorConstants.vL2Height));
@@ -94,7 +95,17 @@ public class RobotContainer {
         // m_driverController.button(ButtonConstants.xboxY).whileTrue(m_elevator.moveUp());
         // m_driverController.button(ButtonConstants.xboxA).whileTrue(m_elevator.moveDown());
         // m_driverController.button(ButtonConstants.xboxB).whileTrue(m_elevator.stop());
-    
+
+        new Trigger(() -> m_driverController.getHID().getPOV() == 0)
+            .onTrue(m_elevator.moveUp());
+        
+        new Trigger(() -> m_driverController.getHID().getPOV() == 180)
+            .onTrue(m_elevator.moveDown());
+        
+        new Trigger(() -> m_driverController.getHID().getPOV() == 90)
+            .onTrue(m_elevator.stop());
+        new Trigger(() -> m_driverController.getHID().getPOV() ==270)
+            .onTrue(AlgaeIntake.runAlgaeRoller(-0.25));
 
         // Hang System
         // m_operatorController.rightTrigger()

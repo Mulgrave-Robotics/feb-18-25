@@ -42,5 +42,11 @@ public class AlgaeSubsystem extends SubsystemBase {
         });
 
     }
+    public Command runAlgaeRoller(double speed) {
+        return run(() -> {
+            m_rollerMoter.set(speed);
+        });
+
+    }
 
 }
