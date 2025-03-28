@@ -83,7 +83,7 @@ public final class Constants {
         // ✅ Make sure these heights exist and are properly defined
         public static final double vL1Height = 0.0; // Base Level
         public static final double vL2Height = 4.99; // Level 2
-        public static final double vL3Height = 12.08; // Level 3
+        public static final double vL3Height = 13.08; // Level 3
         public static final double vL4Height = 20; // Level 4
 
         // ✅ Gear ratio and conversion factors

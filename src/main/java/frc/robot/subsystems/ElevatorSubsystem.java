@@ -90,7 +90,7 @@ public class ElevatorSubsystem extends SubsystemBase {
         } else {
             return setLevel(targetHeight)
                     .until(() -> aroundHeight(targetHeight))
-                    .andThen(() -> {motor.set(-0.01);});
+                    .andThen(() -> {motor.set(-0.02);});
         }
     }
 
