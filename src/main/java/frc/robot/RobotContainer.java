@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ButtonConstants;
 import frc.robot.Constants.ElevatorConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.subsystems.AlgaeSubsystem;
 import frc.robot.subsystems.CoralIntakeSubsystem;
@@ -57,7 +58,22 @@ public class RobotContainer {
         // boolean shouldSwitch = current && !lastCameraSwitchState;
         // lastCameraSwitchState = current;
         // return shouldSwitch;
-    //}        
+    //}       
+    
+    public Command AlgaeMacro() {
+        return new SequentialCommandGroup(
+            
+            new RunCommand(() -> m_robotDrive.drive(-0.1, 0, 0, false), m_robotDrive)
+                .withTimeout(0.3),
+            new InstantCommand(() -> m_robotDrive.drive(0.0, 0, 0, false)), // Stop movement
+            AlgaeIntake.setAlgaeRoller(IntakeConstants.AlgaeIntakeSpeed),
+            new InstantCommand(() -> m_elevator.moveTo(20.5)),
+            new RunCommand(() -> m_robotDrive.drive(0.1, 0, 0, false), m_robotDrive)
+                .withTimeout(0.3),
+            new InstantCommand(() -> m_robotDrive.drive(0.0, 0, 0, false))// Stop movement
+            
+        );
+    }
 
     private void configureButtonBindings() {
 
@@ -77,6 +93,7 @@ public class RobotContainer {
         m_driverController.button(ButtonConstants.xboxLB).onTrue(AlgaeIntake.setAlgaeRoller(Constants.IntakeConstants.AlgaeIntakeSpeed));
         m_driverController.button(ButtonConstants.xboxRB).onTrue(AlgaeIntake.setAlgaeRoller(0));
         m_driverController.button(ButtonConstants.xboxX).onTrue(coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralIntakeSpeeds * 0.5));
+        m_driverController.button(ButtonConstants.xboxLINES).onTrue(m_elevator.moveTo(20.5));
 
 
 
@@ -132,10 +149,13 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return new SequentialCommandGroup(
+            // m_elevator.moveTo(2.5),
             new RunCommand(() -> m_robotDrive.drive(0.2, 0, 0, false), m_robotDrive)
                 .withTimeout(3),
             new InstantCommand(() -> m_robotDrive.drive(0.0, 0, 0, false)), // Stop movement
             coralIntake.setCoralIntakeRoller(Constants.IntakeConstants.CoralOuttakeSpeeds).withTimeout(2),
+
+        
             new InstantCommand(() -> coralIntake.setCoralIntakeRoller(0))
         );
     }

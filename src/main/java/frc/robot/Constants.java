@@ -81,9 +81,10 @@ public final class Constants {
         public static final double kElevatorDefaultTolerance = 0.3;
 
         // ✅ Make sure these heights exist and are properly defined
+        public static final double autoheight = 2.5;
         public static final double vL1Height = 0.0; // Base Level
         public static final double vL2Height = 4.99; // Level 2
-        public static final double vL3Height = 13.08; // Level 3
+        public static final double vL3Height = 12.08; // Level 3
         public static final double vL4Height = 20; // Level 4
 
         // ✅ Gear ratio and conversion factors
@@ -136,7 +137,7 @@ public final class Constants {
         public static final double CoralIntakeSpeeds = -0.05; // Adjust value as needed
         public static final double CoralOuttakeSpeeds = -0.2; // Adjust value as needed
 
-        public static final double AlgaeIntakeSpeed = 0.1;
+        public static final double AlgaeIntakeSpeed = 0.2;
         public static final double AlgaeOuttakeSpeed = -0.1;
         public static final double CoralIntakeSpeed = -0.1;
         public static final double CoralOuttakeSpeed = -0.3;
