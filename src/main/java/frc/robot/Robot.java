@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +32,9 @@ public class Robot extends TimedRobot {
   Thread m_visionThread;
 
   Joystick joy1 = new Joystick(0);
+
+  private final AddressableLED m_led;
+  private final AddressableLEDBuffer m_ledBuffer;
 
   public Robot() {
       m_visionThread =
@@ -69,6 +74,13 @@ public class Robot extends TimedRobot {
             });
     m_visionThread.setDaemon(true);
     m_visionThread.start();
+
+      m_led = new AddressableLED(0); 
+    m_ledBuffer = new AddressableLEDBuffer(30); 
+    m_led.setLength(m_ledBuffer.getLength()); 
+    m_led.start();
+
+    setLEDToRed();
   }
 
   @Override
@@ -81,11 +93,16 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
 
-    // if (m_robotContainer.shouldSwitchCameras()) {
-    //   usingCamera1 = !usingCamera1;
-    //   server.setSource(usingCamera1 ? camera1 : camera2);
-    //   System.out.println("📸 Switched to " + (usingCamera1 ? "Camera 1" : "Camera 2"));
-    // }
+    // Get the current elevator height from the RobotContainer
+    double elevatorHeight = m_robotContainer.getElevatorHeight();
+
+    if (elevatorHeight == 0.0) {
+        setLEDToGreen(); 
+    } else {
+        setLEDToRed();
+    }
+
+    m_led.setData(m_ledBuffer);
   }
 
   @Override
@@ -135,5 +152,20 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
+  }
+
+  private void setLEDToRed() {
+    for (int i = 0; i < m_ledBuffer.getLength(); i++) {
+      m_ledBuffer.setRGB(i, 255, 0, 0);  // Set the color to red (RGB)
+    }
+    m_led.setData(m_ledBuffer);  // Write the data to the LED strip
+  }
+
+  // Method to set the LED strip to green
+  private void setLEDToGreen() {
+    for (int i = 0; i < m_ledBuffer.getLength(); i++) {
+      m_ledBuffer.setRGB(i, 0, 255, 0);  // Set the color to green (RGB)
+    }
+    m_led.setData(m_ledBuffer);  // Write the data to the LED strip
   }
 }
